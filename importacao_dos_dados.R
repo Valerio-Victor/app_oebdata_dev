@@ -768,7 +768,7 @@ resultados[['grafico_pib_demanda_indice']]
 resultados[['grafico_var_pib_demanda_indice']]
 
 
-saveRDS(resultados, file = './app/resultados.rds')
+saveRDS(resultados, file = 'resultados.rds')
 #resultados <- readRDS("~/PROJETOS_R/2022/projetos/app_macro_ce/resultados.rds")
 
 
