@@ -1,8 +1,14 @@
+################################################################################
+################################################################################
+# PACOTES NECESSÁRIOS
 
-#
-#
-# Carregando o Pipe:
+
 library(magrittr, include.only = '%>%')
+
+
+################################################################################
+################################################################################
+# ORGANIZAÇÃO DO LAYOUT GRÁFICO
 
 
 #' Aqui serão organizados a estrutura dos gráficos formatados em plotly, de modo
@@ -26,9 +32,9 @@ plotly_layout <- c('hoverClosestCartesian',
                    'drawline')
 
 
-#
-#
-# Produto Interno Bruto (Valores Correntes): ------------------------------
+################################################################################
+################################################################################
+# NÍVEL DE ATIVIDADE
 
 
 #' Importação do número índice do IPCA para posterior cálculo do deflator, isto
@@ -677,6 +683,681 @@ grafico_var_demanda_indice <- plotly::ggplotly(grafico_var_demanda_indice,
   plotly::config(modeBarButtonsToRemove = plotly_layout)
 
 
+################################################################################
+################################################################################
+# TAXA DE CÂMBIO
+
+
+# Importação de Taxa de Câmbio Nominal Real/Dólar: ------------------------
+cambio_nominal_dolar_d <- BETS::BETSget(10813)
+
+tx_cambio_nominal_dolar_mm <- cambio_nominal_dolar_d %>%
+  dplyr::mutate(date = lubridate::ymd(date)) %>%
+  dplyr::mutate(ano_mes = paste0(lubridate::year(date),
+                                 lubridate::month(date))) %>%
+  dplyr::filter(date >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::group_by(ano_mes) %>%
+  dplyr::summarise(valor = mean(value)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(ano_mes = lubridate::ym(ano_mes)) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico do Cambio Nominal (Real/Dólar): ---------------------------------
+grafico_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+  group = 1,
+  text = paste('Mês-Ano: ',
+               paste0(lubridate::month(ano_mes),
+                      '-',
+                      lubridate::year(ano_mes)),
+               '<br>Taxa de Câmbio (média mensal):', scales::number(valor,
+                                                     big.mark = '.',
+                                                     decimal.mark = ',',
+                                                     accuracy = 0.01), 'R$/US$',
+               '<br> Taxa de Câmbio (último valor):', scales::number(dplyr::last(cambio_nominal_dolar_d$value),
+                                                                     big.mark = '.',
+                                                                     decimal.mark = ',',
+                                                                     accuracy = 0.01), 'R$/US$'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'R$/US$') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_nominal_dolar_mm <- plotly::ggplotly(grafico_nominal_dolar_mm,
+                                             tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Taxa de Câmbio Nominal',
+                                            '<br>',
+                                            '<sup>',
+                                            'Média Mensal',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Variação Mensal da Taxa de Câmbio Nominal (Real/Dólar): -----------------
+grafico_var_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
+  dplyr::select(ano_mes, var_mensal) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Variação:',
+                 scales::percent(var_mensal,
+                                 big.mark = '.',
+                                 decimal.mark = ',',
+                                 accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = var_mensal),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Variação Percentual') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_var_nominal_dolar_mm <- plotly::ggplotly(grafico_var_nominal_dolar_mm,
+                                             tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Variação da Média Mensal da Taxa de Câmbio Nominal',
+                                            '<br>',
+                                            '<sup>',
+                                            '(R$/US$)',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação de Taxa de Câmbio Nominal Real/Euro: -------------------------
+cambio_nominal_euro_d <- BETS::BETSget(21620)
+
+tx_cambio_nominal_euro_mm <- cambio_nominal_euro_d %>%
+  dplyr::mutate(date = lubridate::ymd(date)) %>%
+  dplyr::mutate(ano_mes = paste0(lubridate::year(date),
+                                 lubridate::month(date))) %>%
+  dplyr::filter(date >= lubridate::ymd('2010-01-01')) %>%
+  dplyr::group_by(ano_mes) %>%
+  dplyr::summarise(valor = mean(value)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(ano_mes = lubridate::ym(ano_mes)) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico do Cambio Nominal (Real/Euro): ----------------------------------
+grafico_nominal_euro_mm <- tx_cambio_nominal_euro_mm %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Taxa de Câmbio (média mensal):', scales::number(valor,
+                                                                      big.mark = '.',
+                                                                      decimal.mark = ',',
+                                                                      accuracy = 0.01), 'R$/€',
+                 '<br> Taxa de Câmbio (último valor):', scales::number(dplyr::last(cambio_nominal_euro_d$value),
+                                                                       big.mark = '.',
+                                                                       decimal.mark = ',',
+                                                                       accuracy = 0.01), 'R$/€'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'R$/€') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_nominal_euro_mm <- plotly::ggplotly(grafico_nominal_euro_mm,
+                                             tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Taxa de Câmbio Nominal',
+                                            '<br>',
+                                            '<sup>',
+                                            'Média Mensal',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Variação Mensal da Taxa de Câmbio Nominal (Real/Euro): ------------------
+grafico_var_nominal_euro_mm <- tx_cambio_nominal_euro_mm %>%
+  dplyr::select(ano_mes, var_mensal) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Variação:',
+                 scales::percent(var_mensal,
+                                 big.mark = '.',
+                                 decimal.mark = ',',
+                                 accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = var_mensal),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Variação Percentual') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_var_nominal_euro_mm <- plotly::ggplotly(grafico_var_nominal_euro_mm,
+                                                 tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Variação da Média Mensal da Taxa de Câmbio Nominal',
+                                            '<br>',
+                                            '<sup>',
+                                            '(R$/€)',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação de Taxa de Câmbio Real (Real/Dólar): -------------------------
+cambio_real_dolar_m <- BETS::BETSget(11758)
+
+tx_cambio_real_dolar_m <- cambio_real_dolar_m %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na() %>%
+  dplyr::mutate(valor = round(valor*100/57.13,2))
+
+
+# Gráfico do Cambio Real (Real/Dólar): ------------------------------------
+grafico_real_dolar_m <- tx_cambio_real_dolar_m %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::number(valor,
+                                                                 big.mark = '.',
+                                                                 decimal.mark = ',',
+                                                                 accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Índice de Taxa de Câmbio Real (IPA-DI | 2010 = 100)') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_real_dolar_m <- plotly::ggplotly(grafico_real_dolar_m,
+                                         tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Taxa de Câmbio Real',
+                                            '<br>',
+                                            '<sup>',
+                                            'Dólar Americano',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Variação Mensal da Taxa de Câmbio Real (Real/Dólar): --------------------
+grafico_var_real_dolar_m <- tx_cambio_real_dolar_m %>%
+  dplyr::select(ano_mes, var_mensal) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Variação:',
+                 scales::percent(var_mensal,
+                                 big.mark = '.',
+                                 decimal.mark = ',',
+                                 accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = var_mensal),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Variação Percentual') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_var_real_dolar_m <- plotly::ggplotly(grafico_var_real_dolar_m,
+                                                 tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Variação do Índice de Taxa de Câmbio Real',
+                                            '<br>',
+                                            '<sup>',
+                                            'Dólar Americano',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação de Taxa de Câmbio Real (Real/Euro): --------------------------
+cambio_real_euro_m <- BETS::BETSget(11772)
+
+tx_cambio_real_euro_m <- cambio_real_euro_m %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na() %>%
+  dplyr::mutate(valor = round(valor*100/110.15,2))
+
+
+# Gráfico do Cambio Real (Real/Euro): -------------------------------------
+grafico_real_euro_m <- tx_cambio_real_euro_m %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::number(valor,
+                                              big.mark = '.',
+                                              decimal.mark = ',',
+                                              accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Índice de Taxa de Câmbio Real (IPA-DI | 2010 = 100)') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_real_euro_m <- plotly::ggplotly(grafico_real_euro_m,
+                                         tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Taxa de Câmbio Real',
+                                            '<br>',
+                                            '<sup>',
+                                            'Euro',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Variação Mensal da Taxa de Câmbio Real (Real/Euro): ---------------------
+grafico_var_real_euro_m <- tx_cambio_real_euro_m %>%
+  dplyr::select(ano_mes, var_mensal) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Variação:',
+                 scales::percent(var_mensal,
+                                 big.mark = '.',
+                                 decimal.mark = ',',
+                                 accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = var_mensal),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+  ggplot2::labs(x = 'Períodos',
+                y = 'Variação Percentual') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_var_real_euro_m <- plotly::ggplotly(grafico_var_real_euro_m,
+                                             tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Variação do Índice de Taxa de Câmbio Real',
+                                            '<br>',
+                                            '<sup>',
+                                            'Euro',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação do Saldo em Transações Correntes (Milhões de U$): ------------
+saldo_transacoes_correntes <- BETS::BETSget(22701)
+
+saldo_tc <- saldo_transacoes_correntes %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value/1000) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico do Saldo em Transações Correntes (em Bilhões): ------------------
+grafico_saldo_tc <- saldo_tc %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::number(valor,
+                                              big.mark = '.',
+                                              decimal.mark = ',',
+                                              accuracy = 0.01), '(US$ Bilhões)'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'US$ Bilhões') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_saldo_tc <- plotly::ggplotly(grafico_saldo_tc,
+                                     tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Saldo em Transações Correntes',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação Conta Financeira Líquida (Milhões de U$): ------------
+saldo_conta_financeira <- BETS::BETSget(22863)
+
+saldo_cf <- saldo_conta_financeira %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value/1000) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico na Conta Financeira (em Bilhões): ------------------
+grafico_saldo_cf <- saldo_cf %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::number(valor,
+                                              big.mark = '.',
+                                              decimal.mark = ',',
+                                              accuracy = 0.01), '(US$ Bilhões)'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'US$ Bilhões') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_saldo_cf <- plotly::ggplotly(grafico_saldo_cf,
+                                     tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Conta Financeira Líquida',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Importação Reservas Internacionais (Milhões de U$): ------------
+reservas_internacionais <- BETS::BETSget(3546)
+
+dados_reservas_internacionais <- reservas_internacionais %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value/1000) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico Reservas Internacionais (em Bilhões): ------------------
+grafico_reservas_internacionais <- dados_reservas_internacionais %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::number(valor,
+                                              big.mark = '.',
+                                              decimal.mark = ',',
+                                              accuracy = 0.01), '(US$ Bilhões)'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = 'US$ Bilhões') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
+
+
+grafico_reservas_internacionais <- plotly::ggplotly(grafico_reservas_internacionais,
+                                     tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Estoque de Reservas Internacionais (Total)',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+
+
+# Transações Correntes acumulado em 12 meses em relação ao PIB - mensal : ------------
+tc_pib <- BETS::BETSget(23079)
+
+dados_tc_pib <- tc_pib %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value/1000) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico Transações Correntes acumulado em 12 meses em relação ao PIB - mensal: ------------------
+grafico_tc_pib <- dados_tc_pib %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::percent(valor,
+                                               big.mark = '.',
+                                               decimal.mark = ',',
+                                               accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+  ggplot2::labs(x = 'Períodos',
+                y = '(%)') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_tc_pib <- plotly::ggplotly(grafico_tc_pib,
+                                   tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Transações Correntes (acumulado em 12 meses) em relação ao PIB',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+# Investimento Direto no País acumulado em 12 meses em relação ao PIB - mensal  ------------
+id_pib <- BETS::BETSget(23080)
+
+dados_id_pib <- id_pib %>%
+  dplyr::mutate(ano_mes = lubridate::ymd(date),
+                valor = value/1000) %>%
+  dplyr::select(!c(value, date)) %>%
+  dplyr::filter(ano_mes >= lubridate::ymd('2009-12-01')) %>%
+  dplyr::mutate(var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+  tidyr::drop_na()
+
+
+# Gráfico Investimento Direto no País acumulado em 12 meses em relação ao PIB - mensal ------------------
+grafico_id_pib <- dados_id_pib %>%
+  dplyr::select(ano_mes, valor) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Mês-Ano: ',
+                 paste0(lubridate::month(ano_mes),
+                        '-',
+                        lubridate::year(ano_mes)),
+                 '<br>Valor:', scales::percent(valor,
+                                               big.mark = '.',
+                                               decimal.mark = ',',
+                                               accuracy = 0.01)))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = ano_mes,
+                                            y = valor),
+                     color = '#3C8DBC',
+                     size = 0.75) +
+  ggplot2::labs(x = 'Períodos',
+                y = '(%)') +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
+
+
+grafico_id_pib <- plotly::ggplotly(grafico_id_pib,
+                                   tooltip = c('text')) %>%
+  plotly::layout(title = list(text = paste0('Investimento Direto no País (acumulado em 12 meses) em relação ao PIB',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -751,7 +1432,20 @@ resultados <- list(
   grafico_var_pib_setores_indice = grafico_var_pib_setores_indice,
   tabela_pib_demanda_vc = tabela_pib_demanda_valores,
   grafico_pib_demanda_indice = grafico_pib_demanda_indice,
-  grafico_var_pib_demanda_indice = grafico_var_demanda_indice
+  grafico_var_pib_demanda_indice = grafico_var_demanda_indice,
+  grafico_nominal_dolar = grafico_nominal_dolar_mm,
+  grafico_nominal_euro = grafico_nominal_euro_mm,
+  grafico_var_nominal_dolar = grafico_var_nominal_dolar_mm,
+  grafico_var_nominal_euro = grafico_var_nominal_euro_mm,
+  grafico_real_dolar = grafico_real_dolar_m,
+  grafico_real_euro = grafico_real_euro_m,
+  grafico_var_real_dolar = grafico_var_real_dolar_m,
+  grafico_var_real_euro = grafico_var_real_euro_m,
+  grafico_saldo_tc = grafico_saldo_tc,
+  grafico_saldo_cf = grafico_saldo_cf,
+  grafico_r_i = grafico_reservas_internacionais,
+  grafico_tc_pib = grafico_tc_pib,
+  grafico_id_pib = grafico_id_pib
 )
 
 
