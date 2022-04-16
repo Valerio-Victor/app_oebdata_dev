@@ -1420,8 +1420,51 @@ grafico_id_pib <- plotly::ggplotly(grafico_id_pib,
 ################################################################################
 ################################################################################
 
-# Formação da Lista de Tabelas e Figuras: ---------------------------------
-resultados <- list(
+
+# Formação da Lista de Tabelas e Figuras do Nível de Atividade: -----------
+resultados_nivel_atividade <- list(
+  tabela_pib_vc = tabela_pib_valores,
+  grafico_pib_indice = grafico_pib_indice,
+  grafico_var_pib_indice = grafico_var_pib_indice,
+  grafico_real_potencial = grafico_real_potencial,
+  grafico_hiato = grafico_hiato,
+  tabela_pib_setores_vc = tabela_pib_setores_valores,
+  grafico_pib_setores_indice = grafico_pib_setores_indice,
+  grafico_var_pib_setores_indice = grafico_var_pib_setores_indice,
+  tabela_pib_demanda_vc = tabela_pib_demanda_valores,
+  grafico_pib_demanda_indice = grafico_pib_demanda_indice,
+  grafico_var_pib_demanda_indice = grafico_var_demanda_indice
+)
+
+
+saveRDS(resultados_nivel_atividade,
+        file = 'resultados_nivel_atividade.rds')
+
+
+# Formação da Lista de Tabelas e Figuras do Setor Externo: ----------------
+resultados_setor_externo <- list(
+  grafico_nominal_dolar = grafico_nominal_dolar_mm,
+  grafico_nominal_euro = grafico_nominal_euro_mm,
+  grafico_var_nominal_dolar = grafico_var_nominal_dolar_mm,
+  grafico_var_nominal_euro = grafico_var_nominal_euro_mm,
+  grafico_real_dolar = grafico_real_dolar_m,
+  grafico_real_euro = grafico_real_euro_m,
+  grafico_var_real_dolar = grafico_var_real_dolar_m,
+  grafico_var_real_euro = grafico_var_real_euro_m,
+  grafico_saldo_tc = grafico_saldo_tc,
+  grafico_saldo_cf = grafico_saldo_cf,
+  grafico_r_i = grafico_reservas_internacionais,
+  grafico_tc_pib = grafico_tc_pib,
+  grafico_id_pib = grafico_id_pib
+)
+
+
+saveRDS(resultados_setor_externo,
+        file = 'resultados_setor_externo.rds')
+
+
+# Formação da Lista de Tabelas e Figuras do Total: ------------------------
+resultados_total <- list(
   tabela_pib_vc = tabela_pib_valores,
   grafico_pib_indice = grafico_pib_indice,
   grafico_var_pib_indice = grafico_var_pib_indice,
@@ -1449,29 +1492,60 @@ resultados <- list(
 )
 
 
-resultados[['tabela_pib_vc']]
-resultados[['grafico_pib_indice']]
-resultados[['grafico_var_pib_indice']]
-resultados[['grafico_real_potencial']]
-resultados[['grafico_hiato']]
-resultados[['tabela_pib_setores_vc']]
-resultados[['grafico_pib_setores_indice']]
-resultados[['grafico_var_pib_setores_indice']]
-resultados[['tabela_pib_demanda_vc']]
-resultados[['grafico_pib_demanda_indice']]
-resultados[['grafico_var_pib_demanda_indice']]
+saveRDS(resultados_total,
+        file = 'resultados_total')
 
 
-saveRDS(resultados, file = 'resultados.rds')
-#resultados <- readRDS("~/PROJETOS_R/2022/projetos/app_macro_ce/resultados.rds")
 
 
 
 
 
 
-################################################################################
-################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ################################################################################
 ################################################################################
 ################################################################################
@@ -1536,285 +1610,8 @@ saveRDS(resultados, file = 'resultados.rds')
 ################################################################################
 ################################################################################
 ################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-valor_nominal <- pib_vc %>%
-  dplyr::filter(trimestre == dplyr::last(trimestre),
-                setores == 'PIB (preços de mercado)') %>%
-  dplyr::select(valor_nominal) %>%
-  dplyr::mutate(valor_nominal = scales::number(valor_nominal,
-                                               big.mark = '.',
-                                               decimal.mark = ',',
-                                               accuracy = 0.01))
-
-#
-acumulado_nominal <- pib_vc %>%
-  dplyr::filter(trimestre == dplyr::last(trimestre),
-                setores == 'PIB (preços de mercado)') %>%
-  dplyr::select(trimestre, acumulado_nominal)
-  dplyr::mutate(acumulado_nominal = scales::number(acumulado_nominal,
-                                                   big.mark = '.',
-                                                   decimal.mark = ',',
-                                                   accuracy = 0.01))
-
-#
-data_deflator <- pib_vc %>%
-  dplyr::filter(trimestre == dplyr::last(trimestre),
-                setores == 'PIB (preços de mercado)') %>%
-  dplyr::select(trimestre) %>%
-  dplyr::mutate(trimestre = paste0(lubridate::month(trimestre,
-                                                    abbr = FALSE,
-                                                    label = TRUE),
-                                   '/',
-                                   lubridate::year(trimestre)))
-
-#
-pib_vc_st_graf <- pib_vc %>%
-  dplyr::filter(setores == 'PIB (preços de mercado)') %>%
-  ggplot2::ggplot(ggplot2::aes(
-    group = 1,
-    text = paste('Data: ', paste0(lubridate::month(trimestre,
-                                                   abbr = FALSE,
-                                                   label = TRUE),
-                                  '/',
-                                  lubridate::year(trimestre)),
-                 '<br> ----------',
-                 '<br> Valor:', scales::number(valor_real/1000,
-                                               big.mark = '.',
-                                               decimal.mark = ',',
-                                               accuracy = 0.01),
-                 '<br> Acumulado no Ano:', scales::number(acumulado_real/1000,
-                                                          big.mark = '.',
-                                                          decimal.mark = ',',
-                                                          accuracy = 0.01),
-                 '<br> ----------',
-                 '<br> Variação Interanual:', scales::percent(var_anual,
-                                                              suffix = '%',
-                                                              decimal.mark = ',',
-                                                              accuracy = 0.01),
-                 '<br> Variação Trimestral:', scales::percent(var_mensal,
-                                                              suffix = '%',
-                                                              decimal.mark = ',',
-                                                              accuracy = 0.01)))) +
-  ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
-                                            y = valor_real/1000),
-                     size = 0.75,
-                     color = '#2A788EFF') +
-  ggplot2::labs(color = '',
-                y = '(Valores em Bilhões de Reais)',
-                x = '<br>') +
-  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
-  ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
-  ggplot2::theme(legend.position = 'bottom')
-
-#
-plotly::ggplotly(pib_vc_st_graf, tooltip = c('text')) %>%
-  plotly::layout(title = list(text = paste0('Produto Interno Bruto',
-                                            '<br>',
-                                            '<sup>',
-                                            'Série Deflacionada pelo IPCA a preços de ',
-                                            data_deflator,
-                                            '<br>')),
-                 margin = list(l = 50, t = 50)) %>%
-  plotly::config(modeBarButtonsToRemove = plotly_layout)
-
-#
-#
-# Produto Interno Bruto (Número Índice)-----------------------------------------
-
-#
-agregados_indice <- sidrar::get_sidra(api = '/t/1621/n1/all/v/all/p/all/c11255/90687,90691,90696,90707,93404,93405,93406,93407,93408/d/v584%202') %>%
-  janitor::clean_names() %>%
-  dplyr::select(valor, trimestre_codigo, setores_e_subsetores) %>%
-  dplyr::rename('valor' = valor,
-                'trimestre' = trimestre_codigo,
-                'setores' = setores_e_subsetores) %>%
-  dplyr::filter(trimestre >= 200901) %>%
-  dplyr::mutate(setores = dplyr::case_when(
-    setores == 'PIB a preços de mercado'~ 'PIB (preços de mercado)',
-    setores == 'Despesa de consumo das famílias' ~ 'Consumo das <br> Famílias',
-    setores == 'Despesa de consumo da administração pública' ~ 'Gastos do <br> Governo',
-    setores == 'Formação bruta de capital fixo' ~ 'Formação Bruta de <br> Capital Fixo',
-    setores == 'Exportação de bens e serviços' ~ 'Exportações',
-    setores == 'Importação de bens e serviços (-)' ~ 'Importações',
-    setores == 'Agropecuária - total' ~ 'Agropecuária',
-    setores == 'Indústria - total' ~ 'Indústria',
-    setores == 'Serviços - total' ~ 'Serviços'),
-    trimestre = lubridate::yq(trimestre),
-    ano = lubridate::year(trimestre)) %>%
-  dplyr::group_by(setores) %>%
-  dplyr::mutate(
-    var_anual = round((valor-dplyr::lag(valor, 4))/dplyr::lag(valor, 4), 4),
-    var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
-  tidyr::drop_na() %>%
-  dplyr::mutate(valor = valor*100/head(valor,1))
-
-#
-pib_indice <- agregados_indice %>%
-  dplyr::filter(setores == 'PIB (preços de mercado)') %>%
-  dplyr::mutate(potencial = mFilter::hpfilter(valor,
-                                              freq = as.numeric(nrow(.)),
-                                              type = 'lambda') %>%
-                  purrr::pluck('trend')) %>%
-  dplyr::mutate(hiato = 100*((valor/potencial)-1))
-
-View(pib_indice)
-
-#
-pib_indice_graf <- pib_indice %>%
-  dplyr::ungroup() %>%
-  dplyr::select(-c(ano, setores, var_anual, var_mensal, hiato)) %>%
-  tidyr::pivot_longer(-trimestre, names_to = 'variaveis', values_to = 'valores') %>%
-  dplyr::mutate(variaveis = dplyr::case_when(variaveis == 'potencial' ~ 'PIB Potencial',
-                                             variaveis == 'valor' ~ 'PIB Efetivo')) %>%
-  ggplot2::ggplot(ggplot2::aes(
-    group = 1,
-    text = paste('Data: ', paste0(lubridate::month(trimestre,
-                                                   abbr = FALSE,
-                                                   label = TRUE),
-                                  '/',
-                                  lubridate::year(trimestre)),
-                 '<br> ----------',
-                 '<br> Índice:', scales::number(valores,
-                                                big.mark = '.',
-                                                decimal.mark = ',',
-                                                accuracy = 0.01),
-                 '<br> Referência:', variaveis))) +
-  ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
-                                            y = valores,
-                                            color = variaveis),
-                     size = 0.75) +
-  ggplot2::labs(color = '',
-                y = 'Número Índice (Base: 2010 = 100)',
-                x = '<br>') +
-  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
-  ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
-  ggplot2::theme(legend.position = 'bottom')+
-  ggplot2::scale_color_manual(breaks = c('PIB Efetivo',
-                                         'PIB Potencial'),
-                              values = c('#2A788EFF',
-                                         '#414487FF'))
-
-#
-plotly::ggplotly(pib_indice_graf, tooltip = c('text')) %>%
-  plotly::layout(legend = list(orientation = 'h', x = 0.05, y = -0.15),
-                 title = list(text = paste0('PIB Efetivo versus PIB Potencial',
-                                            '<br>',
-                                            '<sup>',
-                                            'Séries com Ajuste Sazonal',
-                                            '<br>')),
-                 margin = list(l = 50, t = 50)) %>%
-  plotly::config(modeBarButtonsToRemove = plotly_layout)
-
-#
-hiato_indice_graf <- pib_indice %>%
-  dplyr::ungroup() %>%
-  dplyr::select(trimestre, hiato) %>%
-  ggplot2::ggplot(ggplot2::aes(
-    group = 1,
-    text = paste('Data: ', paste0(lubridate::month(trimestre,
-                                                   abbr = FALSE,
-                                                   label = TRUE),
-                                  '/',
-                                  lubridate::year(trimestre)),
-                 '<br> ----------',
-                 '<br> Técnica: Filtro Hodrick-Prescott',
-                 '<br> Valor:', scales::percent(hiato/100,
-                                                big.mark = '.',
-                                                decimal.mark = ',',
-                                                accuracy = 0.01)))) +
-  ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
-                                            y = hiato),
-                     size = 0.75,
-                     color = '#2A788EFF') +
-  ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(color = '',
-                y = 'Porcentagem',
-                x = '<br>') +
-  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
-  ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
-  ggplot2::theme(legend.position = 'bottom')
-
-#
-plotly::ggplotly(hiato_indice_graf, tooltip = c('text')) %>%
-  plotly::layout(title = list(text = paste0('Hiato do Produto',
-                                            '<br>')),
-                 margin = list(l = 50, t = 50)) %>%
-  plotly::config(modeBarButtonsToRemove = plotly_layout)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ################################################################################
 ################################################################################
-
-
-
-
-
-
 
 
 
@@ -1849,56 +1646,335 @@ plotly::ggplotly(hiato_indice_graf, tooltip = c('text')) %>%
 
 #
 #
-# Pesquisa Industrial Mensal ---------------------------------------------------
-pim_sa_indice_api <- sidrar::get_sidra(api = '/t/3651/n1/all/v/3134/p/all/c543/129278,129283,129300/d/v3134%201') %>%
-  janitor::clean_names() %>%
-  dplyr::select(valor, mes_codigo, grandes_categorias_economicas) %>%
-  dplyr::rename('valor' = valor,
-                'mes' = mes_codigo,
-                'setores' = grandes_categorias_economicas) %>%
-  dplyr::mutate(setores = dplyr::case_when(setores == '1 Bens de capital' ~ 'Bens de Capital',
-                                           setores == '2 Bens intermediários' ~ 'Bens Intermediários',
-                                           setores == '3 Bens de consumo' ~ 'Bens de Consumo'))
 #
 #
-# Pesquisa Mensal do Comércio --------------------------------------------------
-pmc_sa_indice_api <- sidrar::get_sidra(api = '/t/3417/n1/all/v/all/p/all/c11046/40312/d/v1186%201,v1190%201') %>%
-  janitor::clean_names() %>%
-  dplyr::select(valor, mes_codigo, variavel) %>%
-  dplyr::rename('valor' = valor,
-                'mes' = mes_codigo,
-                'tipo' = variavel) %>%
-  dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de vendas no comércio varejista ampliado' ~ 'Volume de Vendas',
-                                        tipo == 'Índice de receita nominal de vendas no comércio varejista ampliado' ~ 'Receita Nominal'))
 #
 #
-# Pesquisa Mensal de Serviços --------------------------------------------------
-pms_sa_indice_api <- sidrar::get_sidra(api = '/t/6442/n1/all/v/all/p/all/c11046/40312/d/v8676%201,v8677%201') %>%
-  janitor::clean_names() %>%
-  dplyr::select(valor, mes_codigo, variavel) %>%
-  dplyr::rename('valor' = valor,
-                'mes' = mes_codigo,
-                'tipo' = variavel) %>%
-  dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de serviços' ~ 'Volume de Serviços',
-                                        tipo == 'Índice de receita nominal de serviços' ~ 'Receita Nominal'))
+#
+# #
+# valor_nominal <- pib_vc %>%
+#   dplyr::filter(trimestre == dplyr::last(trimestre),
+#                 setores == 'PIB (preços de mercado)') %>%
+#   dplyr::select(valor_nominal) %>%
+#   dplyr::mutate(valor_nominal = scales::number(valor_nominal,
+#                                                big.mark = '.',
+#                                                decimal.mark = ',',
+#                                                accuracy = 0.01))
+#
+# #
+# acumulado_nominal <- pib_vc %>%
+#   dplyr::filter(trimestre == dplyr::last(trimestre),
+#                 setores == 'PIB (preços de mercado)') %>%
+#   dplyr::select(trimestre, acumulado_nominal)
+#   dplyr::mutate(acumulado_nominal = scales::number(acumulado_nominal,
+#                                                    big.mark = '.',
+#                                                    decimal.mark = ',',
+#                                                    accuracy = 0.01))
+#
+# #
+# data_deflator <- pib_vc %>%
+#   dplyr::filter(trimestre == dplyr::last(trimestre),
+#                 setores == 'PIB (preços de mercado)') %>%
+#   dplyr::select(trimestre) %>%
+#   dplyr::mutate(trimestre = paste0(lubridate::month(trimestre,
+#                                                     abbr = FALSE,
+#                                                     label = TRUE),
+#                                    '/',
+#                                    lubridate::year(trimestre)))
+#
+# #
+# pib_vc_st_graf <- pib_vc %>%
+#   dplyr::filter(setores == 'PIB (preços de mercado)') %>%
+#   ggplot2::ggplot(ggplot2::aes(
+#     group = 1,
+#     text = paste('Data: ', paste0(lubridate::month(trimestre,
+#                                                    abbr = FALSE,
+#                                                    label = TRUE),
+#                                   '/',
+#                                   lubridate::year(trimestre)),
+#                  '<br> ----------',
+#                  '<br> Valor:', scales::number(valor_real/1000,
+#                                                big.mark = '.',
+#                                                decimal.mark = ',',
+#                                                accuracy = 0.01),
+#                  '<br> Acumulado no Ano:', scales::number(acumulado_real/1000,
+#                                                           big.mark = '.',
+#                                                           decimal.mark = ',',
+#                                                           accuracy = 0.01),
+#                  '<br> ----------',
+#                  '<br> Variação Interanual:', scales::percent(var_anual,
+#                                                               suffix = '%',
+#                                                               decimal.mark = ',',
+#                                                               accuracy = 0.01),
+#                  '<br> Variação Trimestral:', scales::percent(var_mensal,
+#                                                               suffix = '%',
+#                                                               decimal.mark = ',',
+#                                                               accuracy = 0.01)))) +
+#   ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
+#                                             y = valor_real/1000),
+#                      size = 0.75,
+#                      color = '#2A788EFF') +
+#   ggplot2::labs(color = '',
+#                 y = '(Valores em Bilhões de Reais)',
+#                 x = '<br>') +
+#   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+#   ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
+#   ggplot2::theme(legend.position = 'bottom')
+#
+# #
+# plotly::ggplotly(pib_vc_st_graf, tooltip = c('text')) %>%
+#   plotly::layout(title = list(text = paste0('Produto Interno Bruto',
+#                                             '<br>',
+#                                             '<sup>',
+#                                             'Série Deflacionada pelo IPCA a preços de ',
+#                                             data_deflator,
+#                                             '<br>')),
+#                  margin = list(l = 50, t = 50)) %>%
+#   plotly::config(modeBarButtonsToRemove = plotly_layout)
+#
+# #
+# #
+# # Produto Interno Bruto (Número Índice)-----------------------------------------
+#
+# #
+# agregados_indice <- sidrar::get_sidra(api = '/t/1621/n1/all/v/all/p/all/c11255/90687,90691,90696,90707,93404,93405,93406,93407,93408/d/v584%202') %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, trimestre_codigo, setores_e_subsetores) %>%
+#   dplyr::rename('valor' = valor,
+#                 'trimestre' = trimestre_codigo,
+#                 'setores' = setores_e_subsetores) %>%
+#   dplyr::filter(trimestre >= 200901) %>%
+#   dplyr::mutate(setores = dplyr::case_when(
+#     setores == 'PIB a preços de mercado'~ 'PIB (preços de mercado)',
+#     setores == 'Despesa de consumo das famílias' ~ 'Consumo das <br> Famílias',
+#     setores == 'Despesa de consumo da administração pública' ~ 'Gastos do <br> Governo',
+#     setores == 'Formação bruta de capital fixo' ~ 'Formação Bruta de <br> Capital Fixo',
+#     setores == 'Exportação de bens e serviços' ~ 'Exportações',
+#     setores == 'Importação de bens e serviços (-)' ~ 'Importações',
+#     setores == 'Agropecuária - total' ~ 'Agropecuária',
+#     setores == 'Indústria - total' ~ 'Indústria',
+#     setores == 'Serviços - total' ~ 'Serviços'),
+#     trimestre = lubridate::yq(trimestre),
+#     ano = lubridate::year(trimestre)) %>%
+#   dplyr::group_by(setores) %>%
+#   dplyr::mutate(
+#     var_anual = round((valor-dplyr::lag(valor, 4))/dplyr::lag(valor, 4), 4),
+#     var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+#   tidyr::drop_na() %>%
+#   dplyr::mutate(valor = valor*100/head(valor,1))
+#
+# #
+# pib_indice <- agregados_indice %>%
+#   dplyr::filter(setores == 'PIB (preços de mercado)') %>%
+#   dplyr::mutate(potencial = mFilter::hpfilter(valor,
+#                                               freq = as.numeric(nrow(.)),
+#                                               type = 'lambda') %>%
+#                   purrr::pluck('trend')) %>%
+#   dplyr::mutate(hiato = 100*((valor/potencial)-1))
+#
+# View(pib_indice)
+#
+# #
+# pib_indice_graf <- pib_indice %>%
+#   dplyr::ungroup() %>%
+#   dplyr::select(-c(ano, setores, var_anual, var_mensal, hiato)) %>%
+#   tidyr::pivot_longer(-trimestre, names_to = 'variaveis', values_to = 'valores') %>%
+#   dplyr::mutate(variaveis = dplyr::case_when(variaveis == 'potencial' ~ 'PIB Potencial',
+#                                              variaveis == 'valor' ~ 'PIB Efetivo')) %>%
+#   ggplot2::ggplot(ggplot2::aes(
+#     group = 1,
+#     text = paste('Data: ', paste0(lubridate::month(trimestre,
+#                                                    abbr = FALSE,
+#                                                    label = TRUE),
+#                                   '/',
+#                                   lubridate::year(trimestre)),
+#                  '<br> ----------',
+#                  '<br> Índice:', scales::number(valores,
+#                                                 big.mark = '.',
+#                                                 decimal.mark = ',',
+#                                                 accuracy = 0.01),
+#                  '<br> Referência:', variaveis))) +
+#   ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
+#                                             y = valores,
+#                                             color = variaveis),
+#                      size = 0.75) +
+#   ggplot2::labs(color = '',
+#                 y = 'Número Índice (Base: 2010 = 100)',
+#                 x = '<br>') +
+#   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+#   ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
+#   ggplot2::theme(legend.position = 'bottom')+
+#   ggplot2::scale_color_manual(breaks = c('PIB Efetivo',
+#                                          'PIB Potencial'),
+#                               values = c('#2A788EFF',
+#                                          '#414487FF'))
+#
+# #
+# plotly::ggplotly(pib_indice_graf, tooltip = c('text')) %>%
+#   plotly::layout(legend = list(orientation = 'h', x = 0.05, y = -0.15),
+#                  title = list(text = paste0('PIB Efetivo versus PIB Potencial',
+#                                             '<br>',
+#                                             '<sup>',
+#                                             'Séries com Ajuste Sazonal',
+#                                             '<br>')),
+#                  margin = list(l = 50, t = 50)) %>%
+#   plotly::config(modeBarButtonsToRemove = plotly_layout)
+#
+# #
+# hiato_indice_graf <- pib_indice %>%
+#   dplyr::ungroup() %>%
+#   dplyr::select(trimestre, hiato) %>%
+#   ggplot2::ggplot(ggplot2::aes(
+#     group = 1,
+#     text = paste('Data: ', paste0(lubridate::month(trimestre,
+#                                                    abbr = FALSE,
+#                                                    label = TRUE),
+#                                   '/',
+#                                   lubridate::year(trimestre)),
+#                  '<br> ----------',
+#                  '<br> Técnica: Filtro Hodrick-Prescott',
+#                  '<br> Valor:', scales::percent(hiato/100,
+#                                                 big.mark = '.',
+#                                                 decimal.mark = ',',
+#                                                 accuracy = 0.01)))) +
+#   ggplot2::geom_line(mapping = ggplot2::aes(x = trimestre,
+#                                             y = hiato),
+#                      size = 0.75,
+#                      color = '#2A788EFF') +
+#   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
+#   ggplot2::labs(color = '',
+#                 y = 'Porcentagem',
+#                 x = '<br>') +
+#   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+#   ggplot2::scale_y_continuous(labels = scales::number_format(big.mark = '.')) +
+#   ggplot2::theme(legend.position = 'bottom')
+#
+# #
+# plotly::ggplotly(hiato_indice_graf, tooltip = c('text')) %>%
+#   plotly::layout(title = list(text = paste0('Hiato do Produto',
+#                                             '<br>')),
+#                  margin = list(l = 50, t = 50)) %>%
+#   plotly::config(modeBarButtonsToRemove = plotly_layout)
 #
 #
-# Índice do Banco Central ------------------------------------------------------
-ibc_br_api <- httr::GET('http://api.bcb.gov.br/dados/serie/bcdata.sgs.24364/dados?formato=json&dataInicial=01/01/2001') %>%
-  httr::content(simplifyDataFrame =  TRUE) %>%
-  dplyr::rename('mes' = data,
-                'valor' = valor) %>%
-  dplyr::mutate(mes = lubridate::dmy(mes),
-                valor = as.numeric(valor))
 #
 #
-# Utilização da Capacidade Industrial ------------------------------------------
-uci_api <- httr::GET('http://api.bcb.gov.br/dados/serie/bcdata.sgs.1344/dados?formato=json&dataInicial=30/04/1970') %>%
-  httr::content(simplifyDataFrame =  TRUE) %>%
-  dplyr::rename('trimestre' = data,
-                'valor' = valor) %>%
-  dplyr::mutate(trimestre = lubridate::dmy(trimestre),
-                valor = as.numeric(valor))
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# ################################################################################
+# ################################################################################
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# #
+# #
+# # Pesquisa Industrial Mensal ---------------------------------------------------
+# pim_sa_indice_api <- sidrar::get_sidra(api = '/t/3651/n1/all/v/3134/p/all/c543/129278,129283,129300/d/v3134%201') %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, grandes_categorias_economicas) %>%
+#   dplyr::rename('valor' = valor,
+#                 'mes' = mes_codigo,
+#                 'setores' = grandes_categorias_economicas) %>%
+#   dplyr::mutate(setores = dplyr::case_when(setores == '1 Bens de capital' ~ 'Bens de Capital',
+#                                            setores == '2 Bens intermediários' ~ 'Bens Intermediários',
+#                                            setores == '3 Bens de consumo' ~ 'Bens de Consumo'))
+# #
+# #
+# # Pesquisa Mensal do Comércio --------------------------------------------------
+# pmc_sa_indice_api <- sidrar::get_sidra(api = '/t/3417/n1/all/v/all/p/all/c11046/40312/d/v1186%201,v1190%201') %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, variavel) %>%
+#   dplyr::rename('valor' = valor,
+#                 'mes' = mes_codigo,
+#                 'tipo' = variavel) %>%
+#   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de vendas no comércio varejista ampliado' ~ 'Volume de Vendas',
+#                                         tipo == 'Índice de receita nominal de vendas no comércio varejista ampliado' ~ 'Receita Nominal'))
+# #
+# #
+# # Pesquisa Mensal de Serviços --------------------------------------------------
+# pms_sa_indice_api <- sidrar::get_sidra(api = '/t/6442/n1/all/v/all/p/all/c11046/40312/d/v8676%201,v8677%201') %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, variavel) %>%
+#   dplyr::rename('valor' = valor,
+#                 'mes' = mes_codigo,
+#                 'tipo' = variavel) %>%
+#   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de serviços' ~ 'Volume de Serviços',
+#                                         tipo == 'Índice de receita nominal de serviços' ~ 'Receita Nominal'))
+# #
+# #
+# # Índice do Banco Central ------------------------------------------------------
+# ibc_br_api <- httr::GET('http://api.bcb.gov.br/dados/serie/bcdata.sgs.24364/dados?formato=json&dataInicial=01/01/2001') %>%
+#   httr::content(simplifyDataFrame =  TRUE) %>%
+#   dplyr::rename('mes' = data,
+#                 'valor' = valor) %>%
+#   dplyr::mutate(mes = lubridate::dmy(mes),
+#                 valor = as.numeric(valor))
+# #
+# #
+# # Utilização da Capacidade Industrial ------------------------------------------
+# uci_api <- httr::GET('http://api.bcb.gov.br/dados/serie/bcdata.sgs.1344/dados?formato=json&dataInicial=30/04/1970') %>%
+#   httr::content(simplifyDataFrame =  TRUE) %>%
+#   dplyr::rename('trimestre' = data,
+#                 'valor' = valor) %>%
+#   dplyr::mutate(trimestre = lubridate::dmy(trimestre),
+#                 valor = as.numeric(valor))
 
 
 
