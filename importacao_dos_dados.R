@@ -1486,6 +1486,7 @@ resultados_total <- list(
   grafico_var_real_euro = grafico_var_real_euro_m,
   grafico_saldo_tc = grafico_saldo_tc,
   grafico_saldo_cf = grafico_saldo_cf,
+
   grafico_r_i = grafico_reservas_internacionais,
   grafico_tc_pib = grafico_tc_pib,
   grafico_id_pib = grafico_id_pib
@@ -1493,7 +1494,7 @@ resultados_total <- list(
 
 
 saveRDS(resultados_total,
-        file = 'resultados_total')
+        file = 'resultados_total.rds')
 
 
 
