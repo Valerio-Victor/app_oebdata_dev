@@ -1,3 +1,8 @@
+
+
+tictoc::tic()
+
+
 ################################################################################
 ################################################################################
 # PACOTES NECESSÁRIOS
@@ -2490,6 +2495,10 @@ resultados_total <- list(
 
 saveRDS(resultados_total,
         file = 'resultados_total.rds')
+
+
+tictoc::toc()
+
 
 beepr::beep(sound = 8)
 
