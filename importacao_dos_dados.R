@@ -667,10 +667,35 @@ grafico_pib_demanda_indice <- plotly::ggplotly(grafico_pib_demanda_indice,
 
 
 # Importação dos dados da Pesquisa Industrial Mensal ---------------------------
+# pim_sa_indice_api <-
+# sidrar::get_sidra(
+# api = '/t/3651/n1/all/v/3134/p/all/c543/129278,129283,129300/d/v3134%201'
+# )
+#
+# pim_sa_indice <- pim_sa_indice_api %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, grandes_categorias_economicas) %>%
+#   dplyr::rename('valor' = valor,
+#                 'data' = mes_codigo,
+#                 'setores' = grandes_categorias_economicas) %>%
+#   dplyr::mutate(setores = dplyr::case_when(setores == '1 Bens de capital' ~ 'Bens de Capital',
+#                                            setores == '2 Bens intermediários' ~ 'Bens Intermediários',
+#                                            setores == '3 Bens de consumo' ~ 'Bens de Consumo'),
+#                 data = lubridate::ym(data)) %>%
+#   dplyr::group_by(setores) %>%
+#   dplyr::mutate(
+#     var_anual = round((valor-dplyr::lag(valor, 12))/dplyr::lag(valor, 12), 4),
+#     var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+#   tidyr::drop_na() %>%
+#   dplyr::filter(data >= lubridate::ymd('2010-01-01')) %>%
+#   dplyr::mutate(valor = valor*100/head(valor,1)) %>%
+#   dplyr::ungroup()
+
+
 pim_sa_indice_api <-
-sidrar::get_sidra(
-api = '/t/3651/n1/all/v/3134/p/all/c543/129278,129283,129300/d/v3134%201'
-)
+  sidrar::get_sidra(
+    api = '/t/8158/n1/all/v/11600/p/all/c543/129278,129283,129300/d/v11600%205'
+  )
 
 pim_sa_indice <- pim_sa_indice_api %>%
   janitor::clean_names() %>%
@@ -742,17 +767,42 @@ grafico_pim_sa_indice <- plotly::ggplotly(grafico_pim_sa_indice,
 
 
 # Importação dos dados da Pesquisa Mensal do Comércio --------------------------
+# pmc_sa_indice_api <-
+# sidrar::get_sidra(
+# api = '/t/3417/n1/all/v/all/p/all/c11046/40312/d/v1186%201,v1190%201'
+# )
+
+
 pmc_sa_indice_api <-
 sidrar::get_sidra(
-api = '/t/3417/n1/all/v/all/p/all/c11046/40312/d/v1186%201,v1190%201'
+api = '/t/8186/n1/all/v/11707/p/all/c11046/all/d/v11707%205'
 )
+
+# pmc_sa_indice <- pmc_sa_indice_api %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, variavel) %>%
+#   dplyr::rename('valor' = valor,
+#                 'data' = mes_codigo,
+#                 'tipo' = variavel) %>%
+#   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de vendas no comércio varejista ampliado' ~ 'Volume de Vendas',
+#                                         tipo == 'Índice de receita nominal de vendas no comércio varejista ampliado' ~ 'Receita Nominal'),
+#                 data = lubridate::ym(data)) %>%
+#   dplyr::group_by(tipo) %>%
+#   dplyr::mutate(
+#     var_anual = round((valor-dplyr::lag(valor, 12))/dplyr::lag(valor, 12), 4),
+#     var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+#   tidyr::drop_na() %>%
+#   dplyr::filter(data >= lubridate::ymd('2010-01-01')) %>%
+#   dplyr::mutate(valor = valor*100/head(valor,1)) %>%
+#   dplyr::ungroup()
+
 
 pmc_sa_indice <- pmc_sa_indice_api %>%
   janitor::clean_names() %>%
-  dplyr::select(valor, mes_codigo, variavel) %>%
+  dplyr::select(valor, mes_codigo, tipos_de_indice) %>%
   dplyr::rename('valor' = valor,
                 'data' = mes_codigo,
-                'tipo' = variavel) %>%
+                'tipo' = tipos_de_indice) %>%
   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de vendas no comércio varejista ampliado' ~ 'Volume de Vendas',
                                         tipo == 'Índice de receita nominal de vendas no comércio varejista ampliado' ~ 'Receita Nominal'),
                 data = lubridate::ym(data)) %>%
@@ -816,18 +866,42 @@ grafico_pmc_sa_indice <- plotly::ggplotly(grafico_pmc_sa_indice,
 
 
 # Importação dos dados da Pesquisa Mensal de Serviços --------------------------
-pms_sa_indice_api <-
-sidrar::get_sidra(
-api = '/t/6442/n1/all/v/all/p/all/c11046/40312/d/v8676%201,v8677%201'
-)
+# pms_sa_indice_api <-
+# sidrar::get_sidra(
+# api = '/t/6442/n1/all/v/all/p/all/c11046/40312/d/v8676%201,v8677%201'
+# )
 
+
+pms_sa_indice_api <-
+  sidrar::get_sidra(
+    api = '/t/8161/n1/all/v/11622/p/all/c11046/all/d/v11622%205'
+  )
+
+
+# pms_sa_indice <- pms_sa_indice_api %>%
+#   janitor::clean_names() %>%
+#   dplyr::select(valor, mes_codigo, variavel) %>%
+#   dplyr::rename('valor' = valor,
+#                 'data' = mes_codigo,
+#                 'tipo' = variavel) %>%
+#   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de serviços' ~ 'Volume de Serviços',
+#                                         tipo == 'Índice de receita nominal de serviços' ~ 'Receita Nominal'),
+#                 data = lubridate::ym(data)) %>%
+#   dplyr::group_by(tipo) %>%
+#   dplyr::mutate(
+#     var_anual = round((valor-dplyr::lag(valor, 12))/dplyr::lag(valor, 12), 4),
+#     var_mensal = round((valor-dplyr::lag(valor, 1))/dplyr::lag(valor, 1), 4)) %>%
+#   tidyr::drop_na() %>%
+#   dplyr::filter(data >= lubridate::ymd('2010-01-01')) %>%
+#   dplyr::mutate(valor = valor*100/head(valor,1)) %>%
+#   dplyr::ungroup()
 
 pms_sa_indice <- pms_sa_indice_api %>%
   janitor::clean_names() %>%
-  dplyr::select(valor, mes_codigo, variavel) %>%
+  dplyr::select(valor, mes_codigo, tipos_de_indice) %>%
   dplyr::rename('valor' = valor,
                 'data' = mes_codigo,
-                'tipo' = variavel) %>%
+                'tipo' = tipos_de_indice) %>%
   dplyr::mutate(tipo = dplyr::case_when(tipo == 'Índice de volume de serviços' ~ 'Volume de Serviços',
                                         tipo == 'Índice de receita nominal de serviços' ~ 'Receita Nominal'),
                 data = lubridate::ym(data)) %>%
