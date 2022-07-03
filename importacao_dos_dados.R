@@ -100,7 +100,7 @@ pib_vc <- sidrar::get_sidra(api = '/t/1846/n1/all/v/all/p/all/c11255/90687,90691
   dplyr::ungroup() %>%
   dplyr::filter(trimestre >= lubridate::ym(201001))
 
-
+excel_pib_vc <- pib_vc #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< exportar
 #' Construindo a tabela de valores de PIB com o pacote ractable. A ideia é
 #' adicionar 'interação' de cores nas taxas de crescimento, barras no valor
 #' deflacionado.
@@ -2580,7 +2580,7 @@ beepr::beep(sound = 8)
 
 
 
-
+# excel_pib_vc
 
 
 
