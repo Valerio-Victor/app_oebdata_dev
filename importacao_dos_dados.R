@@ -51,7 +51,7 @@ deflator <- sidrar::get_sidra(api = '/t/1737/n1/all/v/2266/p/last%20325/d/v2266%
                    indice = valor)
 
 
-
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> tabela exportável feita
 #' Importação dos dados de PIB a valores correntes e cálculo do valor real (a
 #' partir do deflator cálculo acima - IPCA), cálculo das variáções anuais e
 #' trimestrais com base nos valores reais e cálculo dos acumulados nominais e
@@ -100,7 +100,7 @@ pib_vc <- sidrar::get_sidra(api = '/t/1846/n1/all/v/all/p/all/c11255/90687,90691
   dplyr::ungroup() %>%
   dplyr::filter(trimestre >= lubridate::ym(201001))
 
-excel_pib_vc <- pib_vc #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< exportar
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> tabela exportável feita
 #' Construindo a tabela de valores de PIB com o pacote ractable. A ideia é
 #' adicionar 'interação' de cores nas taxas de crescimento, barras no valor
 #' deflacionado.
@@ -186,6 +186,7 @@ agregados_indice <- sidrar::get_sidra(api = '/t/1621/n1/all/v/all/p/all/c11255/9
   dplyr::ungroup()
 
 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> tabela exportável feita
 #' Gráfico apenas do número índice do PIB para introdução de uma perspectiva
 #' temporal:
 grafico_pib_indice <- agregados_indice %>%
@@ -292,6 +293,7 @@ potencial <- agregados_indice %>%
   dplyr::mutate(hiato = ((valor/potencial)-1))
 
 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> tabela exportável feita
 grafico_real_potencial <- potencial %>%
   dplyr::select(!hiato) %>%
   tidyr::pivot_longer(-trimestre, names_to = 'ref', values_to = 'valores') %>%
@@ -2571,35 +2573,216 @@ saveRDS(resultados_total,
         file = 'resultados_total.rds')
 
 
+excel_deflator <- deflator %>%
+  dplyr::rename('Data' = data,
+                'Deflator (IPCA)' = indice)
+
+
+excel_pib_vc <- pib_vc %>%
+  dplyr::select(!ano) %>%
+  dplyr::mutate(setores = stringr::str_remove_all(setores, ' <br>')) %>%
+  dplyr::rename('Setores (Econômicos e Institucionais)' = setores,
+                'Data' = trimestre,
+                'Valor Corrente' = valor_nominal,
+                'Valor Real' = valor_real,
+                'Variação Interanual (Base: Valores Reais)' = var_anual,
+                'Variação Marginal (Base: Valores Reais)' = var_trim,
+                'Acumulado no Ano (Valor Corrente)' = acumulado_nominal,
+                'Acumulado no Ano (Valor Real)' = acumulado_real)
+
+
+excel_agregados_indice <- agregados_indice %>%
+  dplyr::select(!ano) %>%
+  dplyr::mutate(setores = stringr::str_remove_all(setores, ' <br>')) %>%
+  dplyr::rename('Setores (Econômicos e Institucionais)' = setores,
+                'Data' = trimestre,
+                'Número Índice (Base: 2010 = 100)' = valor,
+                'Variação Interanual' = var_anual,
+                'Variação Marginal' = var_mensal)
+
+
+excel_potencial <- potencial %>%
+  dplyr::mutate(potencial = as.numeric(potencial)) %>%
+  dplyr::rename('Data' = trimestre,
+                'PIB Efetivo (Índice)' = valor,
+                'PIB Potencial (Índice)' = potencial,
+                'Hiato do Produto' = hiato)
+
+
+excel_pim_sa_indice <- pim_sa_indice %>%
+  dplyr::rename('Número Índice' = valor,
+                'Data' = data,
+                'Categorias Econômicas' = setores,
+                'Variação Interanual' = var_anual,
+                'Variação Marginal' = var_mensal)
+
+
+excel_pmc_sa_indice <- pmc_sa_indice %>%
+  dplyr::rename('Número Índice' = valor,
+                'Data' = data,
+                'Tipos de Índice' = tipo,
+                'Variação Interanual' = var_anual,
+                'Variação Marginal' = var_mensal)
+
+
+excel_pms_sa_indice <- pms_sa_indice %>%
+  dplyr::rename('Número Índice' = valor,
+                'Data' = data,
+                'Tipos de Índice' = tipo,
+                'Variação Interanual' = var_anual,
+                'Variação Marginal' = var_mensal)
+
+
+excel_ibc_br <- ibc_br %>%
+  dplyr::rename('Número Índice' = valor,
+                'Data' = data,
+                'Variação Interanual' = var_anual,
+                'Variação Marginal' = var_mensal)
+
+
+tabelas_nivel_de_atividade <- list('Deflator' = excel_deflator,
+                                   'PIB (Valores)' = excel_pib_vc,
+                                   'PIB (Número Índice)' = excel_agregados_indice,
+                                   'PIB Potencial' = excel_potencial,
+                                   'PIM' = excel_pim_sa_indice,
+                                   'PMC' = excel_pmc_sa_indice,
+                                   'PMS' = excel_pms_sa_indice,
+                                   'IBC-BR' = excel_ibc_br)
+
+
+openxlsx::write.xlsx(tabelas_nivel_de_atividade, 'oeb_nivel_de_atividade.xlsx')
+
+
+excel_tx_cambio_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Taxa de Câmbio Nominal (Média Mensal - R$/US$)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_tx_cambio_nominal_euro_mm <- tx_cambio_nominal_euro_mm %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Taxa de Câmbio Nominal (Média Mensal - R$/€)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_tx_cambio_real_dolar_m <- tx_cambio_real_dolar_m %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Taxa de Câmbio Real (Dólar)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_tx_cambio_real_euro_m <- tx_cambio_real_euro_m %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Taxa de Câmbio Real (Euro)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_saldo_tc <- saldo_tc %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Saldo em Transações Correntes (US$ - Bilhões)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_saldo_cf <- saldo_cf %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Saldo Líquido em Conta Financeira (US$ - Bilhões)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_dados_reservas_internacionais <- dados_reservas_internacionais %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Estoque Total em Reservas Internacionais (US$ - Bilhões)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_dados_tc_pib <- dados_tc_pib %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Déficit em Transações Correntes em Relação ao PIB (Acumulado em 12 meses)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+excel_dados_id_pib <- dados_id_pib %>%
+  dplyr::arrange(desc(ano_mes)) %>%
+  dplyr::rename('Data' = ano_mes,
+                'Investimento Direto em relação ao PIB (Acumulado em 12 meses)' = valor,
+                'Variação Marginal' = var_mensal)
+
+
+tabelas_taxa_de_cambio <- list('Câmbio Nominal (Dólar)' = excel_tx_cambio_nominal_dolar_mm,
+                               'Câmbio Nominal (Euro)' = excel_tx_cambio_nominal_euro_mm,
+                               'Câmbio Real (Dólar)' = excel_tx_cambio_real_dolar_m,
+                               'Câmbio Real (Euro)' = excel_tx_cambio_real_euro_m,
+                               'Saldo em TC' = excel_saldo_tc,
+                               'Saldo em CF' = excel_saldo_cf,
+                               'Reservas Internacionais' = excel_dados_reservas_internacionais,
+                               'TC em Proporção do PIB' = excel_dados_tc_pib,
+                               'ID em Proporção do PIB' = excel_dados_id_pib)
+
+
+openxlsx::write.xlsx(tabelas_taxa_de_cambio, 'oeb_taxa_de_cambio.xlsx')
+
+
+excel_ipca_cheio <- ipca_cheio %>%
+  dplyr::rename('Data' = mes_codigo,
+                'Variável' = variavel,
+                'Valor' = valor)
+
+
+excel_ipca_grupo_peso <- ipca_grupo_peso %>%
+  dplyr::select(!variavel) %>%
+  dplyr::rename('Data' = mes_codigo,
+                'Grupo' = grupo,
+                'Peso no Mês (%)' = valor)
+
+
+excel_ipca_grupo <- ipca_grupo %>%
+  dplyr::rename('Data' = data,
+                'Grupo' = grupo,
+                'Variação Mensal (por Grupos)' = valor,
+                'Variação Acumulada no Ano (por Grupos)' = valor_acum_ano)
+
+
+excel_dados_difusao <- dados_difusao %>%
+  dplyr::rename('Data' = data,
+                'Índice de Difusão (IPCA)' = valor)
+
+
+excel_itens_livres_monitorados <- itens_livres_monitorados %>%
+  dplyr::rename('Data' = data,
+                'Tipo de Item' = item,
+                'Variação Mensal (por Tipo de Item)' = valor)
+
+
+excel_itens_comercializaveis_nao_comercializaveis <- itens_comercializaveis_nao_comercializaveis %>%
+  dplyr::rename('Data' = data,
+                'Tipo de Item' = item,
+                'Variação Mensal (por Tipo de Item)' = valor)
+
+
+tabelas_taxa_de_inflacao <- list(
+  'IPCA Cheio' = excel_ipca_cheio,
+  'Peso por Grupo (IPCA)' = excel_ipca_grupo_peso,
+  'IPCA por Grupo' = excel_ipca_grupo,
+  'Índice de Difusão' = excel_dados_difusao,
+  'Livres e Monitorados' = excel_itens_livres_monitorados,
+  'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
+
+
+openxlsx::write.xlsx(tabelas_taxa_de_inflacao, 'oeb_taxa_de_inflacao.xlsx')
+
+
+
 tictoc::toc()
 
-
 beepr::beep(sound = 8)
-
-
-
-
-
-# excel_pib_vc
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
