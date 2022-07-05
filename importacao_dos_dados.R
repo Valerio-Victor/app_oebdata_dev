@@ -2779,8 +2779,36 @@ tabelas_taxa_de_inflacao <- list(
 openxlsx::write.xlsx(tabelas_taxa_de_inflacao, 'oeb_taxa_de_inflacao.xlsx')
 
 
+tabelas_total <- list('Deflator' = excel_deflator,
+                      'PIB (Valores)' = excel_pib_vc,
+                      'PIB (Número Índice)' = excel_agregados_indice,
+                      'PIB Potencial' = excel_potencial,
+                      'PIM' = excel_pim_sa_indice,
+                      'PMC' = excel_pmc_sa_indice,
+                      'PMS' = excel_pms_sa_indice,
+                      'IBC-BR' = excel_ibc_br,
+                      'Câmbio Nominal (Dólar)' = excel_tx_cambio_nominal_dolar_mm,
+                      'Câmbio Nominal (Euro)' = excel_tx_cambio_nominal_euro_mm,
+                      'Câmbio Real (Dólar)' = excel_tx_cambio_real_dolar_m,
+                      'Câmbio Real (Euro)' = excel_tx_cambio_real_euro_m,
+                      'Saldo em TC' = excel_saldo_tc,
+                      'Saldo em CF' = excel_saldo_cf,
+                      'Reservas Internacionais' = excel_dados_reservas_internacionais,
+                      'TC em Proporção do PIB' = excel_dados_tc_pib,
+                      'ID em Proporção do PIB' = excel_dados_id_pib,
+                      'IPCA Cheio' = excel_ipca_cheio,
+                      'Peso por Grupo (IPCA)' = excel_ipca_grupo_peso,
+                      'IPCA por Grupo' = excel_ipca_grupo,
+                      'Índice de Difusão' = excel_dados_difusao,
+                      'Livres e Monitorados' = excel_itens_livres_monitorados,
+                      'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
+
+
+openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
+
 
 tictoc::toc()
+
 
 beepr::beep(sound = 8)
 
