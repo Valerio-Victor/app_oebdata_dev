@@ -2650,7 +2650,9 @@ tabelas_nivel_de_atividade <- list('Deflator' = excel_deflator,
                                    'IBC-BR' = excel_ibc_br)
 
 
-openxlsx::write.xlsx(tabelas_nivel_de_atividade, 'oeb_nivel_de_atividade.xlsx')
+#openxlsx::write.xlsx(tabelas_nivel_de_atividade, 'oeb_nivel_de_atividade.xlsx')
+saveRDS(tabelas_nivel_de_atividade,
+        file = 'oeb_nivel_de_atividade.rds')
 
 
 excel_tx_cambio_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
@@ -2727,7 +2729,9 @@ tabelas_taxa_de_cambio <- list('Câmbio Nominal (Dólar)' = excel_tx_cambio_nomi
                                'ID em Proporção do PIB' = excel_dados_id_pib)
 
 
-openxlsx::write.xlsx(tabelas_taxa_de_cambio, 'oeb_taxa_de_cambio.xlsx')
+#openxlsx::write.xlsx(tabelas_taxa_de_cambio, 'oeb_taxa_de_cambio.xlsx')
+saveRDS(tabelas_taxa_de_cambio,
+        file = 'oeb_taxa_de_cambio.rds')
 
 
 excel_ipca_cheio <- ipca_cheio %>%
@@ -2776,7 +2780,9 @@ tabelas_taxa_de_inflacao <- list(
   'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
 
 
-openxlsx::write.xlsx(tabelas_taxa_de_inflacao, 'oeb_taxa_de_inflacao.xlsx')
+#openxlsx::write.xlsx(tabelas_taxa_de_inflacao, 'oeb_taxa_de_inflacao.xlsx')
+saveRDS(tabelas_taxa_de_inflacao,
+        file = 'oeb_taxa_de_inflacao.rds')
 
 
 tabelas_total <- list('Deflator' = excel_deflator,
@@ -2804,8 +2810,9 @@ tabelas_total <- list('Deflator' = excel_deflator,
                       'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
 
 
-openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
-
+# openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
+saveRDS(tabelas_total,
+        file = 'oeb_conjuntura.xlsx.rds')
 
 tictoc::toc()
 
