@@ -2812,10 +2812,10 @@ tabelas_total <- list('Deflator' = excel_deflator,
 
 # openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
 saveRDS(tabelas_total,
-        file = 'oeb_conjuntura.xlsx.rds')
+        file = 'oeb_conjuntura.rds')
+
 
 tictoc::toc()
-
 
 beepr::beep(sound = 8)
 
