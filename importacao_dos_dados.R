@@ -44,6 +44,10 @@ plotly_layout <- c('hoverClosestCartesian',
 #' Importação do número índice do IPCA para posterior cálculo do deflator, isto
 #' é, razão entre o número índice no período t e o último número índice
 #' disponível:
+#' '/t/1737/n1/all/v/2266/p/last%20325/d/v2266%2013'
+#' '/t/1737/n1/all/v/2266/p/last%20151/d/v2266%2013'
+#' '/t/1737/n1/all/v/2266/p/all/d/v2266%2013'
+
 deflator <- sidrar::get_sidra(api = '/t/1737/n1/all/v/2266/p/last%20325/d/v2266%2013') %>%
   janitor::clean_names() %>%
   dplyr::select(mes_codigo, valor) %>%
