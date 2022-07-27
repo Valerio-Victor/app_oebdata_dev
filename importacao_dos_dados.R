@@ -135,9 +135,9 @@ reactable::reactable(
   columns = list(
     trimestre = reactable::colDef(name = 'TRIMESTRE-ANO',
                                   align = 'center'),
-    acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Bilhões)',
+    acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Milhões)',
                                        align = 'center'),
-    valor_real = reactable::colDef(name = 'VALORES REAIS (em Bilhões)',
+    valor_real = reactable::colDef(name = 'VALORES REAIS (em Milhões)',
                                    align = 'center'),
     var_anual = reactable::colDef(name = 'VARIAÇÃO INTERANUAL (Base: valores reais)',
                                   align = 'center'),
@@ -424,9 +424,9 @@ tabela_pib_setores_valores <- pib_vc_setores %>%
       setores = reactable::colDef(name = 'SETORES ECONÔMICOS'),
       trimestre = reactable::colDef(name = 'TRIMESTRE-ANO',
                                     align = 'center'),
-      acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Bilhões)',
+      acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Milhões)',
                                         align = 'center'),
-      valor_real = reactable::colDef(name = 'VALORES REAIS (em Bilhões)',
+      valor_real = reactable::colDef(name = 'VALORES REAIS (em Milhões)',
                                      align = 'center'),
       var_anual_icon = reactable::colDef(show = FALSE),
       var_trim_icon = reactable::colDef(show = FALSE),
@@ -596,9 +596,9 @@ tabela_pib_demanda_valores <- pib_vc_demanda %>%
       setores = reactable::colDef(name = 'COMPONENTES DA DEMANDA AGREGADA'),
       trimestre = reactable::colDef(name = 'TRIMESTRE-ANO',
                                     align = 'center'),
-      acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Bilhões)',
+      acumulado_real = reactable::colDef(name = 'ACUMULADO NO ANO (em Milhões)',
                                         align = 'center'),
-      valor_real = reactable::colDef(name = 'VALORES REAIS (em Bilhões)',
+      valor_real = reactable::colDef(name = 'VALORES REAIS (em Milhões)',
                                      align = 'center'),
       var_anual_icon = reactable::colDef(show = FALSE),
       var_trim_icon = reactable::colDef(show = FALSE),
@@ -2442,6 +2442,161 @@ grafico_comercializaveis_nao_comercializaveis_acum <- plotly::ggplotly(grafico_c
 
 ################################################################################
 ################################################################################
+# TAXA DE JUROS
+# Importação e Tratamento dos dados:
+selic <- BETS::BETSget(code = '1178',
+                       from = '2012-06-01',
+                       data.frame = TRUE) %>%
+  dplyr::rename('data' = date,
+                'selic' = value) %>%
+  dplyr::mutate(selic = selic/100)
+
+
+expectativa_inflacao <- rbcb::get_twelve_months_inflation_expectations(
+  indic = 'IPCA',
+  start_date = '2012-06-01') %>%
+  dplyr::filter(smoothed == 'S' & base == 0) %>%
+  dplyr::select(date, mean) %>%
+  dplyr::rename('data' = date,
+                'expec_ipca' = mean) %>%
+  dplyr::mutate(expec_ipca = expec_ipca/100)
+
+
+juros <- dplyr::full_join(selic,
+                          expectativa_inflacao,
+                          by = c('data' = 'data')) %>%
+  tidyr::drop_na() %>%
+  dplyr::mutate(juro_ex_ante = (((1+selic)/(1+expec_ipca))-1))
+
+
+ntnb50 <- GetTDData::read.TD.files(dl.folder = 'TD Files')
+
+
+juro_neutro <- ntnb50 %>%
+  dplyr::filter(asset.code == 'NTN-B 150850') %>%
+  dplyr::rename('data' = ref.date,
+                'ntnb50' = yield.bid) %>%
+  dplyr::select(data, ntnb50) %>%
+  dplyr::mutate(juro_neutro = purrr::pluck(
+    mFilter::hpfilter(ntnb50, freq = 10000, type ='lambda'), 'trend'))
+
+
+juros <- dplyr::full_join(juros,
+                          juro_neutro,
+                          by = c('data' = 'data')) %>%
+  tidyr::drop_na()
+
+
+# Visualização de dados:
+selic_graf <- juros %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Data: ', paste0(lubridate::day(data),'-',
+                                  lubridate::month(data),'-',
+                                  lubridate::year(data)),
+                 '<br>Valor:', scales::percent(selic,
+                                               big.mark = '.',
+                                               decimal.mark = ',',
+                                               accuracy = 0.01), 'ao ano'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = data, y = selic),
+            size = 0.75,
+            color = '#440154') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(big.mark = '.',
+                                                     decimal.mark = ',',
+                                                     accuracy = 0.01)) +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::labs(color = '',
+                x = 'Períodos',
+                y = '(% ao ano)')
+
+
+selic_graf <- plotly::ggplotly(selic_graf,
+                               tooltip = c('text')) %>%
+  plotly::layout(legend = list(orientation = 'h', x = 0.05, y = -0.15),
+                 title = list(text = paste0('Taxa Básica de Juros (Nominal)',
+                                            '<br>',
+                                            '<sup>',
+                                            'SELIC Anualizada',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+expectativa_graf <- juros %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Data: ', paste0(lubridate::day(data),'-',
+                                  lubridate::month(data),'-',
+                                  lubridate::year(data)),
+                 '<br>Valor:', scales::percent(expec_ipca,
+                                               big.mark = '.',
+                                               decimal.mark = ',',
+                                               accuracy = 0.01), 'ao ano'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = data, y = expec_ipca),
+                     size = 0.75,
+                     color = '#440154') +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(big.mark = '.',
+                                                              decimal.mark = ',',
+                                                              accuracy = 0.01)) +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::labs(color = '',
+                x = 'Períodos',
+                y = '(% ao ano)')
+
+
+expectativa_graf <- plotly::ggplotly(expectativa_graf,
+                                     tooltip = c('text')) %>%
+  plotly::layout(legend = list(orientation = 'h', x = 0.05, y = -0.15),
+                 title = list(text = paste0('Expectativa de Inflação',
+                                            '<br>',
+                                            '<sup>',
+                                            'Expectativa para o IPCA 12 meses à Frente',
+                                            '<br>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+politica_monetaria_graf <- juros %>%
+  dplyr::select(data, juro_ex_ante, juro_neutro) %>%
+  tidyr::pivot_longer(!data, names_to = 'ref', values_to = 'valores') %>%
+  dplyr::mutate(ref = dplyr::case_when(ref == 'juro_ex_ante' ~ 'Taxa de Básica Juros Real Ex-Ante',
+                                       ref == 'juro_neutro' ~ 'Taxa de Juros Neutro')) %>%
+  ggplot2::ggplot(mapping = ggplot2::aes(
+    group = 1,
+    text = paste('Data: ', paste0(lubridate::day(data),'-',
+                                  lubridate::month(data),'-',
+                                  lubridate::year(data)),
+                 '<br>Valor:', scales::percent(valores,
+                                               big.mark = '.',
+                                               decimal.mark = ',',
+                                               accuracy = 0.01), 'ao ano'))) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = data, y = valores, color = ref),
+                     size = 0.75) +
+  ggplot2::scale_y_continuous(labels = scales::percent_format(big.mark = '.',
+                                                              decimal.mark = ',',
+                                                              accuracy = 0.01)) +
+  ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggplot2::labs(color = '',
+                x = 'Períodos',
+                y = '(% ao ano)') +
+  ggplot2::scale_color_manual(breaks = c('Taxa de Básica Juros Real Ex-Ante',
+                                         'Taxa de Juros Neutro'),
+                              values = c('#440154',
+                                         '#FBE625'))
+
+
+politica_monetaria_graf <- plotly::ggplotly(politica_monetaria_graf,
+                                            tooltip = c('text')) %>%
+  plotly::layout(legend = list(orientation = 'h', x = 0.05, y = -0.15),
+                 title = list(text = paste0('Juros Real versus Juros Neutro',
+                                            '<br>',
+                                            '<sup>')),
+                 margin = list(l = 50, t = 50)) %>%
+  plotly::config(modeBarButtonsToRemove = plotly_layout)
+
+
+################################################################################
+################################################################################
 ################################################################################
 ################################################################################
 ################################################################################
@@ -2509,7 +2664,7 @@ saveRDS(resultados_setor_externo,
 
 
 
-# Formação da Lista de Figuras da Taxa de Inflação: ----------------------- #####################################################
+# Formação da Lista de Figuras da Taxa de Inflação: -----------------------
 resultados_inflacao <- list(
   grafico_ipca_indice = grafico_ipca_indice,
   grafico_ipca_var_mensal = grafico_ipca_var_mensal,
@@ -2527,6 +2682,18 @@ resultados_inflacao <- list(
 
 saveRDS(resultados_inflacao,
         file = 'resultados_inflacao.rds')
+
+
+# Formação de Lista de Figuras da Política Monetária: ---------------------
+resultados_politica_monetaria <- list(
+  selic_graf = selic_graf,
+  expectativa_graf = expectativa_graf,
+  politica_monetaria_graf = politica_monetaria_graf
+)
+
+
+saveRDS(resultados_politica_monetaria,
+        file = 'resultados_politica_monetaria.rds')
 
 
 # Formação da Lista de Tabelas e Figuras do Total: ------------------------
@@ -2569,7 +2736,11 @@ resultados_total <- list(
   grafico_livres_monitorados = grafico_livres_monitorados,
   grafico_livres_monitorados_acum = grafico_livres_monitorados_acum,
   grafico_comercializaveis_nao_comercializaveis = grafico_comercializaveis_nao_comercializaveis,
-  grafico_comercializaveis_nao_comercializaveis_acum = grafico_comercializaveis_nao_comercializaveis_acum
+  grafico_comercializaveis_nao_comercializaveis_acum = grafico_comercializaveis_nao_comercializaveis_acum,
+
+  selic_graf = selic_graf,
+  expectativa_graf = expectativa_graf,
+  politica_monetaria_graf = politica_monetaria_graf
 )
 
 
@@ -2577,6 +2748,7 @@ saveRDS(resultados_total,
         file = 'resultados_total.rds')
 
 
+# Formação de Tabelas: ----------------------------------------------------
 excel_deflator <- deflator %>%
   dplyr::rename('Data' = data,
                 'Deflator (IPCA)' = indice)
@@ -2789,6 +2961,30 @@ saveRDS(tabelas_taxa_de_inflacao,
         file = 'oeb_taxa_de_inflacao.rds')
 
 
+excel_juros <- juros %>%
+  dplyr::mutate(selic = selic*100,
+                expec_ipca = expec_ipca*100,
+                juro_ex_ante = juro_ex_ante*100,
+                ntnb50 = ntnb50*100,
+                juro_neutro = juro_neutro*100) %>%
+  dplyr::rename('Data' = data,
+                'SELIC (% ao ano)' = selic,
+                'Expectativa IPCA (% ao ano 12 meses a frente)' = expec_ipca,
+                'Juros Real Ex-Ante (% ao ano)' = juro_ex_ante,
+                'NTN-B50 (% ao ano)' = ntnb50,
+                'Juro Neutro (% ao ano)' = juro_neutro)
+
+
+tabelas_politica_monetaria <- list(
+  'Política Monetária' = excel_juros
+)
+
+
+#openxlsx::write.xlsx(tabelas_politica_monetaria, 'oeb_politica_monetaria.xlsx')
+saveRDS(tabelas_taxa_de_inflacao,
+        file = 'oeb_politica_monetaria.rds')
+
+
 tabelas_total <- list('Deflator' = excel_deflator,
                       'PIB (Valores)' = excel_pib_vc,
                       'PIB (Número Índice)' = excel_agregados_indice,
@@ -2811,7 +3007,8 @@ tabelas_total <- list('Deflator' = excel_deflator,
                       'IPCA por Grupo' = excel_ipca_grupo,
                       'Índice de Difusão' = excel_dados_difusao,
                       'Livres e Monitorados' = excel_itens_livres_monitorados,
-                      'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
+                      'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis,
+                      'Política Monetária' = excel_juros)
 
 
 # openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
