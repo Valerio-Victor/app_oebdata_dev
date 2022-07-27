@@ -215,7 +215,7 @@ grafico_pib_indice <- agregados_indice %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Trimestres',
+  ggplot2::labs(x = '',
                 y = 'Índice (base: 01-2010 = 100)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -263,7 +263,7 @@ grafico_var_pib_indice <- agregados_indice %>%
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::labs(color = '',
-                x = 'Trimestres',
+                x = '',
                 y = '(%)') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(big.mark = '.',
                                                               decimal.mark = ',')) +
@@ -324,7 +324,7 @@ grafico_real_potencial <- potencial %>%
                                             color = ref),
                      size = 0.75) +
   ggplot2::labs(color = '',
-                x = 'Trimestres',
+                x = '',
                 y = 'Índice (Base: 01-2010 = 100)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ',')) +
@@ -370,7 +370,7 @@ grafico_hiato <- potencial %>%
                      size = 0.75,
                      color = '#440154') +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Trimestres',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ',')) +
@@ -476,7 +476,7 @@ grafico_pib_setores_indice <- agregados_indice %>%
                                             y = valor,
                                             color = setores),
                      size = 0.75) +
-  ggplot2::labs(x = 'Trimestres',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 01-2010 = 100)',
                 color = '') +
   ggplot2::scale_color_viridis_d(direction = -1) +
@@ -652,7 +652,7 @@ grafico_pib_demanda_indice <- agregados_indice %>%
                                             y = valor,
                                             color = setores),
                      size = 0.75) +
-  ggplot2::labs(x = 'Trimestres',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 01-2010 = 100)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -750,7 +750,7 @@ grafico_pim_sa_indice <- pim_sa_indice %>%
                                              y = valor,
                                              color = setores),
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 2010 = 100)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -850,7 +850,7 @@ grafico_pmc_sa_indice <- pmc_sa_indice %>%
                                              y = valor,
                                              color = tipo),
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 2010 = 100)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -949,7 +949,7 @@ grafico_pms_sa_indice <- pms_sa_indice %>%
                                              y = valor,
                                              color = tipo),
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 2010 = 100)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -1017,7 +1017,7 @@ grafico_ibc_br <- ibc_br %>%
                                              y = valor),
                       color = '#440154',
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (Base: 2010 = 100)',
                 color = '') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
@@ -1144,7 +1144,7 @@ grafico_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(R$/US$)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1184,7 +1184,7 @@ grafico_var_nominal_dolar_mm <- tx_cambio_nominal_dolar_mm %>%
                      color = '#440154',
                      size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1242,7 +1242,7 @@ grafico_nominal_euro_mm <- tx_cambio_nominal_euro_mm %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(R$/€)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1282,7 +1282,7 @@ grafico_var_nominal_euro_mm <- tx_cambio_nominal_euro_mm %>%
                      color = '#440154',
                      size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1333,7 +1333,7 @@ grafico_real_dolar_m <- tx_cambio_real_dolar_m %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (IPA-DI | 2010 = 100)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1373,7 +1373,7 @@ grafico_var_real_dolar_m <- tx_cambio_real_dolar_m %>%
                      color = '#440154',
                      size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1424,7 +1424,7 @@ grafico_real_euro_m <- tx_cambio_real_euro_m %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (IPA-DI | 2010 = 100)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1464,7 +1464,7 @@ grafico_var_real_euro_m <- tx_cambio_real_euro_m %>%
                      color = '#440154',
                      size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1515,7 +1515,7 @@ grafico_saldo_tc <- saldo_tc %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'US$ (Bilhões)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1566,7 +1566,7 @@ grafico_saldo_cf <- saldo_cf %>%
                      color = '#440154',
                      size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'US$ (Bilhões)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1616,7 +1616,7 @@ grafico_reservas_internacionais <- dados_reservas_internacionais %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'US$ (Bilhões)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1668,7 +1668,7 @@ grafico_tc_pib <- dados_tc_pib %>%
                                             y = -valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1718,7 +1718,7 @@ grafico_id_pib <- dados_id_pib %>%
                                             y = valor),
                      color = '#440154',
                      size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ','))
@@ -1778,7 +1778,7 @@ grafico_ipca_indice <- ipca_cheio %>%
                                              y = valor),
                       color = '#440154',
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = 'Índice (base: 01-2010 = 100)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::number_format(decimal.mark = ','))
@@ -1817,7 +1817,7 @@ grafico_ipca_var_mensal <- ipca_cheio %>%
                       color = '#440154',
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ',',
@@ -1898,7 +1898,7 @@ grafico_ipca_var_acum_ano <- ipca_cheio %>%
                       color = '#440154',
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%) <sup>') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ',',
@@ -2101,7 +2101,7 @@ grafico_ipca_var_mensal_grupo <- ipca_grupo %>%
                                              color = grupo),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2144,7 +2144,7 @@ grafico_ipca_var_acum_ano_grupo <- ipca_grupo %>%
                                              color = grupo),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%) <sup>',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2192,7 +2192,7 @@ grafico_difusao <- dados_difusao %>%
                                              y = valor/100),
                       color = '#440154',
                       size = 0.75) +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)') +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::scale_y_continuous(labels = scales::percent_format(decimal.mark = ',',
@@ -2253,7 +2253,7 @@ grafico_livres_monitorados <- itens_livres_monitorados %>%
                                              color = item),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%) <sup>',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2304,7 +2304,7 @@ grafico_livres_monitorados_acum <- itens_livres_monitorados %>%
                                              color = item),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2368,7 +2368,7 @@ grafico_comercializaveis_nao_comercializaveis <- itens_comercializaveis_nao_come
                                              color = item),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%) <sup>',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2419,7 +2419,7 @@ grafico_comercializaveis_nao_comercializaveis_acum <- itens_comercializaveis_nao
                                              color = item),
                       size = 0.75) +
   ggplot2::geom_hline(yintercept = 0, linetype = 'dashed', colour = '#D44292') +
-  ggplot2::labs(x = 'Meses',
+  ggplot2::labs(x = '',
                 y = '(%)',
                 color = '') +
   ggplot2::scale_color_viridis_d() +
@@ -2506,7 +2506,7 @@ selic_graf <- juros %>%
                                                      accuracy = 0.01)) +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::labs(color = '',
-                x = 'Períodos',
+                x = '',
                 y = '(% ao ano)')
 
 
@@ -2540,7 +2540,7 @@ expectativa_graf <- juros %>%
                                                               accuracy = 0.01)) +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::labs(color = '',
-                x = 'Períodos',
+                x = '',
                 y = '(% ao ano)')
 
 
@@ -2577,7 +2577,7 @@ politica_monetaria_graf <- juros %>%
                                                               accuracy = 0.01)) +
   ggplot2::scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
   ggplot2::labs(color = '',
-                x = 'Períodos',
+                x = '',
                 y = '(% ao ano)') +
   ggplot2::scale_color_manual(breaks = c('Taxa de Básica Juros Real Ex-Ante',
                                          'Taxa de Juros Neutro'),
