@@ -2738,9 +2738,9 @@ resultados_total <- list(
   grafico_comercializaveis_nao_comercializaveis = grafico_comercializaveis_nao_comercializaveis,
   grafico_comercializaveis_nao_comercializaveis_acum = grafico_comercializaveis_nao_comercializaveis_acum,
 
-  selic_graf = selic_graf,
-  expectativa_graf = expectativa_graf,
-  politica_monetaria_graf = politica_monetaria_graf
+  # selic_graf = selic_graf,
+  # expectativa_graf = expectativa_graf,
+  # politica_monetaria_graf = politica_monetaria_graf
 )
 
 
