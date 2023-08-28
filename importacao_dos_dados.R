@@ -2961,28 +2961,28 @@ saveRDS(tabelas_taxa_de_inflacao,
         file = 'oeb_taxa_de_inflacao.rds')
 
 
-excel_juros <- juros %>%
-  dplyr::mutate(selic = selic*100,
-                expec_ipca = expec_ipca*100,
-                juro_ex_ante = juro_ex_ante*100,
-                ntnb50 = ntnb50*100,
-                juro_neutro = juro_neutro*100) %>%
-  dplyr::rename('Data' = data,
-                'SELIC (% ao ano)' = selic,
-                'Expectativa IPCA (% ao ano 12 meses a frente)' = expec_ipca,
-                'Juros Real Ex-Ante (% ao ano)' = juro_ex_ante,
-                'NTN-B50 (% ao ano)' = ntnb50,
-                'Juro Neutro (% ao ano)' = juro_neutro)
-
-
-tabelas_politica_monetaria <- list(
-  'Política Monetária' = excel_juros
-)
-
-
-#openxlsx::write.xlsx(tabelas_politica_monetaria, 'oeb_politica_monetaria.xlsx')
-saveRDS(tabelas_taxa_de_inflacao,
-        file = 'oeb_politica_monetaria.rds')
+# excel_juros <- juros %>%
+#   dplyr::mutate(selic = selic*100,
+#                 expec_ipca = expec_ipca*100,
+#                 juro_ex_ante = juro_ex_ante*100,
+#                 ntnb50 = ntnb50*100,
+#                 juro_neutro = juro_neutro*100) %>%
+#   dplyr::rename('Data' = data,
+#                 'SELIC (% ao ano)' = selic,
+#                 'Expectativa IPCA (% ao ano 12 meses a frente)' = expec_ipca,
+#                 'Juros Real Ex-Ante (% ao ano)' = juro_ex_ante,
+#                 'NTN-B50 (% ao ano)' = ntnb50,
+#                 'Juro Neutro (% ao ano)' = juro_neutro)
+#
+#
+# tabelas_politica_monetaria <- list(
+#   'Política Monetária' = excel_juros
+# # )
+#
+#
+# #openxlsx::write.xlsx(tabelas_politica_monetaria, 'oeb_politica_monetaria.xlsx')
+# saveRDS(tabelas_taxa_de_inflacao,
+#         file = 'oeb_politica_monetaria.rds')
 
 
 tabelas_total <- list('Deflator' = excel_deflator,
@@ -3007,8 +3007,7 @@ tabelas_total <- list('Deflator' = excel_deflator,
                       'IPCA por Grupo' = excel_ipca_grupo,
                       'Índice de Difusão' = excel_dados_difusao,
                       'Livres e Monitorados' = excel_itens_livres_monitorados,
-                      'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis,
-                      'Política Monetária' = excel_juros)
+                      'Comercializáveis e Não Comer' = excel_itens_comercializaveis_nao_comercializaveis)
 
 
 # openxlsx::write.xlsx(tabelas_total, 'oeb_conjuntura.xlsx')
