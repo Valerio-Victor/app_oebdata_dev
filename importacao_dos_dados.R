@@ -3021,7 +3021,31 @@ beepr::beep(sound = 8)
 
 
 
-
+resultados_total[1]
+resultados_total[2]
+resultados_total[3]
+resultados_total[4]
+resultados_total[5]
+resultados_total[6]
+resultados_total[7]
+resultados_total[8]
+resultados_total[9]
+resultados_total[10]
+resultados_total[11]
+resultados_total[12]
+resultados_total[13]
+resultados_total[14]
+resultados_total[15]
+resultados_total[16]
+resultados_total[17]
+resultados_total[18]
+resultados_total[19]
+resultados_total[20]
+resultados_total[21]
+resultados_total[22]
+resultados_total[23]
+resultados_total[24]
+resultados_total[25]
 
 
 
