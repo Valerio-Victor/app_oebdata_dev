@@ -3046,6 +3046,14 @@ resultados_total[22]
 resultados_total[23]
 resultados_total[24]
 resultados_total[25]
+resultados_total[26]
+resultados_total[27]
+resultados_total[28]
+resultados_total[29]
+resultados_total[30]
+resultados_total[31]
+resultados_total[32]
+resultados_total[33]
 
 
 
